@@ -38,6 +38,37 @@ func TestListAPI(t *testing.T) {
 
 }
 
+func TestAddAPI(t *testing.T) {
+	client := getClient()
+	addAPI, _, _ := client.APIService.Add("ApiTest", "", "/test", "http://localhost:8080/testing", false, false)
+
+	getAPI, _, _ := client.APIService.Get("ApiTest")
+
+	client.APIService.Delete("ApiTest")
+	if addAPI.Id != getAPI.Id {
+		t.Error("ApiTest added with ID ", addAPI.Id, "Get returned ", getAPI.Id)
+	}
+}
+
+func TestDeleteAPI(t *testing.T) {
+	client := getClient()
+	addAPI, _, _ := client.APIService.Add("ApiTest", "", "/test", "http://localhost:8080/testing", false, false)
+
+	getAPI, _, _ := client.APIService.Get("ApiTest")
+
+	client.APIService.Delete("ApiTest")
+
+	getAPIAfterDelete, _, _ := client.APIService.Get("ApiTest")
+
+	if addAPI.Id != getAPI.Id {
+		t.Error("Error including API")
+	}
+
+	if len(getAPIAfterDelete.Name) > 0 {
+		t.Error("Error deleting API")
+	}
+}
+
 func TestListConsumers(t *testing.T) {
 	client := getClient()
 	consumers, _, _ := client.ConsumerService.List()
