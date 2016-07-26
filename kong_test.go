@@ -50,6 +50,23 @@ func TestAddAPI(t *testing.T) {
 	}
 }
 
+func TestUpdateAPI(t *testing.T) {
+	client := getClient()
+	addAPI, _, _ := client.APIService.Add("ApiTest", "", "/test", "http://localhost:8080/testing", false, false)
+	pretty.Println(addAPI)
+
+	updateAPI, _, _ := client.APIService.AddOrUpdate(addAPI.Id, "ApiTest", "", "/testupdate", "http://localhost:8080/testing", false, false, addAPI.CreatedAt)
+	pretty.Println(updateAPI)
+
+	getAPI, _, _ := client.APIService.Get("ApiTest")
+	pretty.Println(getAPI)
+
+	client.APIService.Delete("ApiTest")
+	if addAPI.RequestPath == getAPI.RequestPath {
+		t.Error("ApiTest added with RequestPath ", addAPI.RequestPath, "Get returned ", getAPI.RequestPath)
+	}
+}
+
 func TestDeleteAPI(t *testing.T) {
 	client := getClient()
 	addAPI, _, _ := client.APIService.Add("ApiTest", "", "/test", "http://localhost:8080/testing", false, false)

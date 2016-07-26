@@ -63,6 +63,33 @@ func (s *APIService) Add(name, requestHost, requestPath, upstreamURL string, str
 	return api, resp, err
 }
 
+func (s *APIService) AddOrUpdate(id, name, requestHost, requestPath, upstreamURL string, stripRequestPath, preserveHost bool, createdAt int) (*API, *http.Response, error) {
+	api := new(API)
+	if len(id) > 0 {
+		api.Id = id
+	}
+	if len(name) > 0 {
+		api.Name = name
+	}
+	if len(requestHost) > 0 {
+		api.RequestHost = requestHost
+	}
+	if len(requestPath) > 0 {
+		api.RequestPath = requestPath
+	}
+	api.UpstreamURL = upstreamURL
+	api.StripRequestPath = stripRequestPath
+	api.PreserveHost = preserveHost
+
+	if createdAt > 0 {
+		api.CreatedAt = createdAt
+	}
+
+	resp, err := s.sling.New().Put("/apis").BodyJSON(api).ReceiveSuccess(api)
+
+	return api, resp, err
+}
+
 func (s *APIService) Delete(name string) (*http.Response, error) {
 	resp, err := s.sling.New().Delete("/apis/").Path(name).Receive(nil, nil)
 	return resp, err
