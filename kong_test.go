@@ -86,6 +86,28 @@ func TestDeleteAPI(t *testing.T) {
 	}
 }
 
+func TestAddPlugin(t *testing.T) {
+	client := getClient()
+	client.APIService.Add("ApiTest", "", "/test", "http://localhost:8080/testing", false, false)
+
+	body := &RequestTransformer{
+		Name:           "request-transformer",
+		ReplaceHeaders: "Host:www.test.org",
+	}
+
+	resp, err := client.APIService.AddPlugin("ApiTest", body)
+
+	if err != nil {
+		t.Error("Error adding a plugin: " + err.Error())
+	}
+
+	if resp.StatusCode != 201 {
+		t.Error("StatusCode different from 201: ", resp.StatusCode)
+	}
+
+	client.APIService.Delete("ApiTest")
+}
+
 func TestListConsumers(t *testing.T) {
 	client := getClient()
 	consumers, _, _ := client.ConsumerService.List()

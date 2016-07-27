@@ -94,3 +94,8 @@ func (s *APIService) Delete(name string) (*http.Response, error) {
 	resp, err := s.sling.New().Delete("/apis/").Path(name).Receive(nil, nil)
 	return resp, err
 }
+
+func (s *APIService) AddPlugin(name string, plugin interface{}) (*http.Response, error) {
+	resp, err := s.sling.New().Post("/apis/"+name+"/plugins").BodyForm(plugin).Receive(nil, nil)
+	return resp, err
+}
