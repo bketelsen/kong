@@ -7,14 +7,14 @@ import (
 )
 
 type API struct {
-	Id               string `json:"id,omitempty"`
-	CreatedAt        int    `json:"created_at,omitempty"`
-	Name             string `json:"name,omitempty"`
-	PreserveHost     bool   `json:"preserve_host,omitempty"`
-	RequestHost      string `json:"request_host,omitempty"`
-	RequestPath      string `json:"request_path,omitempty"`
-	StripRequestPath bool   `json:"strip_request_path,omitempty"`
-	UpstreamURL      string `json:"upstream_url"`
+	Id           string `json:"id,omitempty"`
+	CreatedAt    int    `json:"created_at,omitempty"`
+	Name         string `json:"name,omitempty"`
+	PreserveHost bool   `json:"preserve_host,omitempty"`
+	Hosts        string `json:"hosts,omitempty"`
+	Uris         string `json:"uris,omitempty"`
+	StripUri     bool   `json:"strip_uri,omitempty"`
+	UpstreamURL  string `json:"upstream_url"`
 }
 type APIList struct {
 	Data  []API  `json:"data"`
@@ -43,19 +43,19 @@ func (s *APIService) List() (*APIList, *http.Response, error) {
 	return apis, resp, err
 }
 
-func (s *APIService) Add(name, requestHost, requestPath, upstreamURL string, stripRequestPath, preserveHost bool) (*API, *http.Response, error) {
+func (s *APIService) Add(name, Hosts, Uris, upstreamURL string, stripUri, preserveHost bool) (*API, *http.Response, error) {
 	api := new(API)
 	if len(name) > 0 {
 		api.Name = name
 	}
-	if len(requestHost) > 0 {
-		api.RequestHost = requestHost
+	if len(Hosts) > 0 {
+		api.Hosts = Hosts
 	}
-	if len(requestPath) > 0 {
-		api.RequestPath = requestPath
+	if len(Uris) > 0 {
+		api.Uris = Uris
 	}
 	api.UpstreamURL = upstreamURL
-	api.StripRequestPath = stripRequestPath
+	api.StripUri = stripUri
 	api.PreserveHost = preserveHost
 
 	resp, err := s.sling.New().Post("/apis/").BodyJSON(api).ReceiveSuccess(api)
@@ -63,7 +63,7 @@ func (s *APIService) Add(name, requestHost, requestPath, upstreamURL string, str
 	return api, resp, err
 }
 
-func (s *APIService) AddOrUpdate(id, name, requestHost, requestPath, upstreamURL string, stripRequestPath, preserveHost bool, createdAt int) (*API, *http.Response, error) {
+func (s *APIService) AddOrUpdate(id, name, Hosts, Uris, upstreamURL string, stripUri, preserveHost bool, createdAt int) (*API, *http.Response, error) {
 	api := new(API)
 	if len(id) > 0 {
 		api.Id = id
@@ -71,14 +71,14 @@ func (s *APIService) AddOrUpdate(id, name, requestHost, requestPath, upstreamURL
 	if len(name) > 0 {
 		api.Name = name
 	}
-	if len(requestHost) > 0 {
-		api.RequestHost = requestHost
+	if len(Hosts) > 0 {
+		api.Hosts = Hosts
 	}
-	if len(requestPath) > 0 {
-		api.RequestPath = requestPath
+	if len(Uris) > 0 {
+		api.Uris = Uris
 	}
 	api.UpstreamURL = upstreamURL
-	api.StripRequestPath = stripRequestPath
+	api.StripUri = stripUri
 	api.PreserveHost = preserveHost
 
 	if createdAt > 0 {
